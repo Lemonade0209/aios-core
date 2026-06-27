@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+set -eu
+
+APP_HOME=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+GRADLE_VERSION="${GRADLE_VERSION:-8.10.2}"
+GRADLE_HOME="$APP_HOME/.gradle/gradle-$GRADLE_VERSION"
+GRADLE_BIN="$GRADLE_HOME/bin/gradle"
+
+if [ ! -x "$GRADLE_BIN" ]; then
+  DIST="$APP_HOME/.gradle/gradle-$GRADLE_VERSION-bin.zip"
+  mkdir -p "$APP_HOME/.gradle"
+  if command -v curl >/dev/null 2>&1; then
+    curl -fsSL "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -o "$DIST"
+  elif command -v wget >/dev/null 2>&1; then
+    wget -q "https://services.gradle.org/distributions/gradle-$GRADLE_VERSION-bin.zip" -O "$DIST"
+  else
+    echo "curl or wget is required to download Gradle $GRADLE_VERSION" >&2
+    exit 1
+  fi
+  unzip -q "$DIST" -d "$APP_HOME/.gradle"
+fi
+
+exec "$GRADLE_BIN" "$@"
