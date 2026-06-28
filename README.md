@@ -1,232 +1,88 @@
 # AIOS-Core
 
-AIOS-Core is an AI-powered productivity platform for managing projects, tasks, notes, documents, and intelligent work recommendations.
+AIOS-Core는 프로젝트, 작업, 노트, 문서를 한 곳에서 관리하고 AI 기반 요약, 검색, 추천을 제공하는 개인 생산성 플랫폼입니다.
 
-This project is also a **Codex-only implementation experiment**.
-The goal is to explore how far an AI coding agent can implement a large-scale React + Spring Boot application with minimal human-written code.
+목표는 흩어진 업무 정보를 하나의 작업 공간으로 모으고, 사용자가 오늘 해야 할 일과 프로젝트 상태를 빠르게 파악할 수 있게 만드는 것입니다.
 
----
+## 주요 기능
 
-## Overview
+- 회원가입, 로그인, 로그아웃
+- JWT 기반 인증과 보호 라우트
+- 사용자별 데이터 격리
+- 프로젝트 생성, 조회, 수정, 삭제
+- 작업 생성, 조회, 수정, 삭제
+- 작업 우선순위, 상태, 마감일, 기한 초과 감지
+- 노트 작성, 태그, 프로젝트 연결
+- 문서 작성, 프로젝트 연결, AI 요약
+- 대시보드: 오늘 작업, 기한 초과 작업, 프로젝트 진행률, 최근 노트와 문서
+- AI 어시스턴트: 내부 프로젝트/작업/노트/문서 기반 질의응답
+- AI 검색: 현재 MVP는 키워드 기반 fallback을 제공하며, 향후 임베딩 기반 검색으로 확장 가능
+- 영어/한국어 UI 언어 선택
 
-Modern work is spread across many tools:
-
-* Notes
-* Tasks
-* Documents
-* Project management tools
-* Calendars
-* Code repositories
-* AI chatbots
-* File storage
-
-The problem is that these data sources are usually separated.
-
-AIOS-Core aims to provide a single workspace where AI can understand the user's projects, tasks, notes, and documents, then provide useful summaries, search results, and work recommendations.
-
-Instead of manually searching through scattered information, the user can simply ask:
-
-* What should I work on today?
-* What is the current status of this project?
-* Show me all documents related to login.
-* Which tasks are overdue?
-* Summarize this project.
-* What is the next best action?
-
----
-
-## Project Purpose
-
-AIOS-Core has two main purposes.
-
-### 1. Product Goal
-
-Build an AI-first productivity platform that helps users manage work context in one place.
-
-### 2. Codex Experiment Goal
-
-Test how effectively Codex can build and maintain a large React + Spring Boot project when given clear project rules, architecture, and goals.
-
-Human-written code should be minimized.
-The human role is mainly:
-
-* Writing requirements
-* Reviewing diffs
-* Running the app
-* Reporting bugs
-* Approving or rejecting changes
-
-Codex is responsible for:
-
-* Implementing code
-* Updating files
-* Fixing errors
-* Writing documentation
-* Running build/test commands when possible
-
----
-
-## Tech Stack
+## 기술 스택
 
 ### Frontend
 
-* React
-* TypeScript
-* Vite
-* TailwindCSS
-* React Router
+- React
+- TypeScript
+- Vite
+- TailwindCSS
+- React Router
 
 ### Backend
 
-* Java 17 or Java 21
-* Spring Boot
-* Spring Security
-* Spring Data JPA
-* PostgreSQL
-* JWT Authentication
+- Java 21
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- PostgreSQL
+- JWT Authentication
 
 ### AI
 
-* OpenAI API
-* AI Summary
-* AI Assistant
-* Embedding-based semantic search
-* RAG-style context retrieval
+- OpenAI API
+- AI Summary
+- AI Assistant
+- Semantic Search 준비 구조
+- RAG 스타일 context retrieval 확장 가능 구조
 
-### Infrastructure
+### Local Infra
 
-* Docker Compose
-* PostgreSQL
-* Local development environment
+- Docker Compose
+- PostgreSQL
+- pgvector PostgreSQL image
 
----
-
-## MVP Features
-
-### Authentication
-
-* Signup
-* Login
-* Logout
-* JWT access token
-* Protected API endpoints
-* User-specific data isolation
-
-### Project Management
-
-* Create projects
-* View project list
-* View project details
-* Update projects
-* Delete projects
-* Track project status
-* Track project goals
-* Calculate project progress from tasks
-
-### Task Management
-
-* Create tasks
-* View tasks
-* Update tasks
-* Delete tasks
-* Link tasks to projects
-* Set priority
-* Set status
-* Set due date
-* Detect overdue tasks
-
-### Notes
-
-* Markdown-friendly note content
-* Link notes to projects
-* Tag support
-* Basic search
-
-### Documents
-
-* Create documents
-* Link documents to projects
-* Store document content
-* Generate AI summaries
-
-### Dashboard
-
-* Today’s tasks
-* Overdue tasks
-* Project progress
-* Recent notes and documents
-* AI-based work recommendations
-
-### AI Assistant
-
-The AI Assistant answers questions using internal project data.
-
-Example:
-
-```text
-User:
-Explain the login feature status.
-
-AI:
-JWT login has been implemented.
-Refresh token support is not completed yet.
-There are three related tasks and two related documents.
-The next recommended action is to implement refresh token rotation.
-```
-
-### AI Search
-
-AIOS-Core supports searching across:
-
-* Projects
-* Tasks
-* Notes
-* Documents
-
-The preferred search method is embedding-based semantic search.
-The current MVP exposes the semantic-search API with a documented keyword-search fallback. The Docker database image includes pgvector so embedding search can be added later without changing the local infrastructure.
-
----
-
-## Repository Structure
+## 저장소 구조
 
 ```text
 aios-core/
-├── AGENTS.md
-├── README.md
 ├── frontend/
 ├── backend/
 ├── docker/
-└── docs/
-    └── AIOS_Codex_Goal_Pack.md
+├── docs/
+├── AGENTS.md
+└── README.md
 ```
 
 ### frontend/
 
-React + TypeScript application.
+React + TypeScript + Vite 기반 웹 애플리케이션입니다.
 
 ### backend/
 
-Spring Boot application.
+Spring Boot 기반 API 서버입니다.
 
 ### docker/
 
-Local infrastructure files, such as PostgreSQL Docker Compose configuration.
+로컬 개발용 PostgreSQL Docker Compose 설정을 포함합니다.
 
 ### docs/
 
-Project planning, architecture notes, API documentation, ERD, and Codex goal documents.
+API, ERD, 개발 로그, 검증 결과 등 프로젝트 문서를 포함합니다.
 
-### AGENTS.md
+## 백엔드 구조
 
-Project rules for Codex.
-Codex should read this file before making changes.
-
----
-
-## Backend Architecture
-
-The backend follows a modular monolith structure.
+백엔드는 modular monolith 구조를 사용합니다.
 
 ```text
 backend/src/main/java/com/aios/core/
@@ -242,42 +98,24 @@ backend/src/main/java/com/aios/core/
 └── search/
 ```
 
-Each feature should generally include:
+기본 흐름은 다음과 같습니다.
 
 ```text
-controller
-service
-repository
-entity
-dto
+Controller -> DTO -> Service -> Repository -> Entity
 ```
 
-The backend should follow this flow:
+컨트롤러는 요청/응답 처리에 집중하고, 비즈니스 로직과 사용자 소유권 검증은 서비스 계층에서 처리합니다.
 
-```text
-Controller → DTO → Service → Repository → Entity
-```
+## 프론트엔드 구조
 
-JPA entities should not be exposed directly from controllers.
-
----
-
-## Frontend Architecture
-
-The frontend uses a feature-based structure.
+프론트엔드는 기능 중심 구조를 사용합니다.
 
 ```text
 frontend/src/
 ├── api/
 ├── components/
 ├── features/
-│   ├── auth/
-│   ├── projects/
-│   ├── tasks/
-│   ├── notes/
-│   ├── documents/
-│   ├── dashboard/
-│   └── assistant/
+├── i18n/
 ├── layouts/
 ├── pages/
 ├── routes/
@@ -285,7 +123,7 @@ frontend/src/
 └── utils/
 ```
 
-Required pages:
+주요 화면은 다음과 같습니다.
 
 ```text
 /login
@@ -299,15 +137,11 @@ Required pages:
 /assistant
 ```
 
----
+## 환경 변수
 
-## Environment Variables
-
-Create environment files locally.
+실제 비밀 값은 커밋하지 말고 로컬 환경 변수 또는 로컬 `.env` 파일로 관리합니다.
 
 ### Backend
-
-Example:
 
 ```env
 DATABASE_URL=jdbc:postgresql://localhost:5432/aios_core
@@ -315,37 +149,40 @@ DATABASE_USERNAME=aios
 DATABASE_PASSWORD=aios
 JWT_SECRET=replace-with-secure-secret
 OPENAI_API_KEY=replace-with-your-openai-api-key
+FRONTEND_ORIGIN=http://localhost:5173
 ```
 
-### Frontend
+`OPENAI_API_KEY`가 없으면 AI 요약, 어시스턴트, 검색 기능은 deterministic fallback 동작을 사용합니다.
 
-Example:
+### Frontend
 
 ```env
 VITE_API_BASE_URL=http://localhost:8080/api
 ```
 
-Do not commit real secrets.
+## 로컬 실행
 
----
-
-## Local Development
-
-### 1. Start Database
+### 1. PostgreSQL 실행
 
 ```bash
 cd docker
 docker compose up -d
 ```
 
-### 2. Run Backend
+### 2. Backend 실행
 
 ```bash
 cd backend
 ./gradlew bootRun
 ```
 
-### 3. Run Frontend
+기본 API 주소:
+
+```text
+http://localhost:8080
+```
+
+### 3. Frontend 실행
 
 ```bash
 cd frontend
@@ -353,169 +190,59 @@ npm install
 npm run dev
 ```
 
----
+기본 웹 주소:
 
-## Build and Test
+```text
+http://localhost:5173
+```
+
+## 빌드와 검증
 
 ### Backend
 
 ```bash
 cd backend
-./gradlew test
-./gradlew build
+./gradlew clean build
 ```
 
 ### Frontend
 
 ```bash
 cd frontend
-npm run build
+npm install
 npm run lint
+npm run build
 ```
 
----
+### 검증 기록
 
-## Security Rules
+최근 로컬 검증 결과는 `docs/VERIFICATION.md`에서 확인할 수 있습니다.
 
-* Do not commit API keys.
-* Use environment variables for secrets.
-* Store passwords using BCrypt.
-* Protect APIs with JWT.
-* Validate request bodies.
-* Do not expose stack traces to the frontend.
-* Enforce user ownership checks for all user-owned resources.
-* Keep CORS configuration limited to the local frontend during development.
+## 보안 원칙
 
----
+- API key, JWT secret, DB password, 로컬 `.env` 파일은 커밋하지 않습니다.
+- 비밀번호는 BCrypt로 해시합니다.
+- 보호 API는 JWT 인증을 요구합니다.
+- 사용자 소유 리소스는 현재 사용자 기준으로만 조회하고 수정합니다.
+- 요청 body는 서버에서 검증합니다.
+- 프론트엔드에 stack trace를 노출하지 않습니다.
+- 개발 환경 CORS는 로컬 프론트엔드 origin으로 제한합니다.
 
-## Codex Usage
+## 현재 MVP 제한사항
 
-This project is designed to be implemented with Codex.
+- Semantic search는 현재 키워드 기반 fallback으로 동작합니다.
+- OpenAI 기반 응답 품질은 `OPENAI_API_KEY` 설정 여부에 따라 달라집니다.
+- Docker Desktop 또는 Docker Engine이 실행 중이어야 로컬 PostgreSQL을 사용할 수 있습니다.
+- 브라우저 기반 E2E 테스트는 아직 별도 자동화되어 있지 않습니다.
 
-Before working on this repository, Codex should read:
+## 향후 방향
 
-```text
-AGENTS.md
-docs/AIOS_Codex_Goal_Pack.md
-```
+- 임베딩 생성과 pgvector 기반 semantic search
+- AI 추천 품질 개선
+- 알림과 고급 분석
+- 팀 workspace
+- 외부 서비스 연동
 
-Recommended first prompt:
+## 라이선스
 
-```text
-Please read AGENTS.md and docs/AIOS_Codex_Goal_Pack.md first.
-
-Then execute the /goal in docs/AIOS_Codex_Goal_Pack.md.
-
-Important:
-- Use React + TypeScript + Vite for frontend.
-- Use Spring Boot for backend.
-- Do not use Next.js.
-- Do not implement microservices.
-- Keep the backend as a modular monolith.
-- Keep the MVP simple and reviewable.
-- Run build/lint/tests when possible.
-- If something fails, fix it before finishing.
-```
-
-Recommended reasoning level:
-
-```text
-Initial large implementation: high
-Simple UI changes: medium
-CRUD additions: medium
-Spring Security / JWT / RAG / AI Assistant: high
-Refactoring: high
-```
-
----
-
-## Development Principles
-
-* Keep the MVP simple.
-* Do not over-engineer.
-* Prefer maintainable code over clever abstractions.
-* Implement features in small, reviewable steps.
-* Keep frontend and backend contracts consistent.
-* Document known limitations clearly.
-* Do not expand the scope before the MVP works.
-
----
-
-## Not Included in MVP
-
-The following features are intentionally excluded from the first MVP:
-
-* Microservices
-* Kubernetes
-* Redis
-* Elasticsearch
-* AWS S3
-* Slack integration
-* Gmail integration
-* Google Calendar integration
-* Discord integration
-* WebSocket real-time collaboration
-* Mobile app
-* Desktop app
-* Browser extension
-
-These may be considered in later phases after the core MVP is stable.
-
----
-
-## Roadmap
-
-### Phase 1: Core MVP
-
-* Authentication
-* Project CRUD
-* Task CRUD
-* Notes
-* Documents
-* Dashboard
-* AI summaries
-* Basic AI Assistant
-
-### Phase 2: AI Search
-
-* Embedding generation
-* Semantic search
-* RAG-style context retrieval
-* Improved AI recommendations
-
-### Phase 3: Integrations
-
-* GitHub integration
-* Google Calendar integration
-* Gmail integration
-* Slack or Discord integration
-
-### Phase 4: Advanced Platform
-
-* Notification system
-* Advanced analytics
-* Team workspace
-* Browser extension
-* Desktop app
-* Mobile app
-
----
-
-## Current Status
-
-This project is in the initial MVP implementation stage.
-
-The first goal is to build a working React + Spring Boot application with:
-
-* Local PostgreSQL setup
-* Authentication
-* Project/task/note/document management
-* AI summary
-* AI Assistant
-* Dashboard
-
----
-
-## License
-
-This project is currently for personal experimentation and portfolio development.
+라이선스는 아직 지정되지 않았습니다.

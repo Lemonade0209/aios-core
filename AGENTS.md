@@ -6,10 +6,7 @@ AIOS-Core
 
 ## Project Purpose
 
-AIOS-Core is an AI-first personal productivity platform.
-
-This repository is also a Codex-only implementation experiment.
-The goal is to test how far Codex can implement a large-scale React + Spring Boot application with minimal human-written code.
+AIOS-Core is an AI-first personal productivity platform for managing projects, tasks, notes, documents, summaries, search, and work recommendations.
 
 ## Architecture
 
@@ -86,6 +83,7 @@ com.aios.core
 - Keep auth token handling centralized.
 - Avoid mock data when a real API endpoint exists.
 - Keep shared API types in `frontend/src/types`.
+- Keep localization strings centralized under `frontend/src/i18n`.
 - Prefer small page-level components unless reuse clearly justifies extraction.
 
 Required pages:
