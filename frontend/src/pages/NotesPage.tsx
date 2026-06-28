@@ -1,6 +1,7 @@
 import { FormEvent, ReactNode, useEffect, useMemo, useState } from 'react';
 import { api } from '../api/client';
 import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../i18n/I18nContext';
 import { Note, Project } from '../types';
 import { errorMessage } from '../utils/errors';
 import { optionalNumber, splitTags } from '../utils/forms';
@@ -11,6 +12,7 @@ export function NotesPage() {
   const [editing, setEditing] = useState<Note | null>(null);
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
+  const { t } = useI18n();
 
   async function load() {
     try {
@@ -59,7 +61,7 @@ export function NotesPage() {
   }
 
   async function remove(id: number) {
-    if (!confirm('Delete this note?')) return;
+    if (!confirm(t('notes.deleteConfirm'))) return;
     await api.delete(`/notes/${id}`);
     await load();
   }
@@ -77,38 +79,38 @@ export function NotesPage() {
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
       <form key={editing?.id ?? 'new'} className="panel h-fit space-y-4" onSubmit={onSubmit}>
         <div>
-          <h1 className="text-xl font-semibold">{editing ? 'Edit Note' : 'Notes'}</h1>
-          <p className="text-sm text-zinc-600">Markdown-friendly notes with tags.</p>
+          <h1 className="text-xl font-semibold">{editing ? t('notes.editTitle') : t('notes.title')}</h1>
+          <p className="text-sm text-zinc-600">{t('notes.subtitle')}</p>
         </div>
         {error && <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-        <Field label="Title"><input name="title" defaultValue={editing?.title} required /></Field>
-        <Field label="Project">
+        <Field label={t('common.title')}><input name="title" defaultValue={editing?.title} required /></Field>
+        <Field label={t('common.project')}>
           <select name="projectId" defaultValue={editing?.projectId ?? ''}>
-            <option value="">No project</option>
+            <option value="">{t('common.noProject')}</option>
             {projects.map((project) => <option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </Field>
-        <Field label="Content"><textarea name="content" defaultValue={editing?.content} required /></Field>
-        <Field label="Tags"><input name="tags" defaultValue={editing?.tags.join(', ')} placeholder="research, planning" /></Field>
+        <Field label={t('common.content')}><textarea name="content" defaultValue={editing?.content} required /></Field>
+        <Field label={t('common.tags')}><input name="tags" defaultValue={editing?.tags.join(', ')} placeholder={t('notes.tagsPlaceholder')} /></Field>
         <div className="flex gap-2">
-          <button className="btn-primary flex-1">{editing ? 'Save Note' : 'Create Note'}</button>
-          {editing && <button className="btn-secondary" type="button" onClick={() => setEditing(null)}>Cancel</button>}
+          <button className="btn-primary flex-1">{editing ? t('notes.save') : t('notes.create')}</button>
+          {editing && <button className="btn-secondary" type="button" onClick={() => setEditing(null)}>{t('action.cancel')}</button>}
         </div>
       </form>
       <section className="space-y-3">
-        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search notes..." />
-        {filtered.length === 0 ? <EmptyState title="No matching notes" /> : filtered.map((note) => (
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t('notes.searchPlaceholder')} />
+        {filtered.length === 0 ? <EmptyState title={t('notes.empty')} /> : filtered.map((note) => (
           <article key={note.id} className="panel">
             <div className="flex flex-col justify-between gap-3 sm:flex-row">
               <div>
                 <h2 className="font-semibold">{note.title}</h2>
                 <p className="mt-1 line-clamp-3 whitespace-pre-wrap text-sm text-zinc-600">{note.content}</p>
-                <p className="mt-2 text-xs uppercase text-zinc-500">{note.projectTitle ?? 'No project'} · {note.tags.join(', ') || 'No tags'}</p>
+                <p className="mt-2 text-xs uppercase text-zinc-500">{note.projectTitle ?? t('common.noProject')} · {note.tags.join(', ') || t('common.noTags')}</p>
               </div>
               <div className="flex gap-2">
-                <button className="btn-secondary" onClick={() => void summarize(note)}>Summarize</button>
-                <button className="btn-secondary" onClick={() => setEditing(note)}>Edit</button>
-                <button className="btn-danger" onClick={() => void remove(note.id)}>Delete</button>
+                <button className="btn-secondary" onClick={() => void summarize(note)}>{t('action.summarize')}</button>
+                <button className="btn-secondary" onClick={() => setEditing(note)}>{t('action.edit')}</button>
+                <button className="btn-danger" onClick={() => void remove(note.id)}>{t('action.delete')}</button>
               </div>
             </div>
           </article>

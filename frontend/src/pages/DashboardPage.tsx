@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../api/client';
 import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../i18n/I18nContext';
 import { Dashboard } from '../types';
 import { errorMessage } from '../utils/errors';
 
 export function DashboardPage() {
   const [dashboard, setDashboard] = useState<Dashboard | null>(null);
   const [error, setError] = useState('');
+  const { t } = useI18n();
 
   useEffect(() => {
     api.get<Dashboard>('/dashboard').then((response) => setDashboard(response.data)).catch((err) => setError(errorMessage(err)));
@@ -17,38 +19,38 @@ export function DashboardPage() {
     return <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>;
   }
   if (!dashboard) {
-    return <p className="text-sm text-zinc-600">Loading dashboard...</p>;
+    return <p className="text-sm text-zinc-600">{t('dashboard.loading')}</p>;
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-semibold">Dashboard</h1>
-        <p className="text-sm text-zinc-600">Current work, risk, and recent context.</p>
+        <h1 className="text-2xl font-semibold">{t('dashboard.title')}</h1>
+        <p className="text-sm text-zinc-600">{t('dashboard.subtitle')}</p>
       </div>
       <section className="grid gap-4 md:grid-cols-3">
-        <Metric label="Today" value={dashboard.todaysTasks.length} />
-        <Metric label="Overdue" value={dashboard.overdueTasks.length} />
-        <Metric label="Projects" value={dashboard.projects.length} />
+        <Metric label={t('dashboard.today')} value={dashboard.todaysTasks.length} />
+        <Metric label={t('dashboard.overdue')} value={dashboard.overdueTasks.length} />
+        <Metric label={t('dashboard.projects')} value={dashboard.projects.length} />
       </section>
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="panel space-y-3">
-          <h2 className="font-semibold">Today's Tasks</h2>
-          {dashboard.todaysTasks.length === 0 ? <EmptyState title="No tasks due today" /> : dashboard.todaysTasks.map((task) => (
+          <h2 className="font-semibold">{t('dashboard.todaysTasks')}</h2>
+          {dashboard.todaysTasks.length === 0 ? <EmptyState title={t('dashboard.noTasksToday')} /> : dashboard.todaysTasks.map((task) => (
             <TaskRow key={task.id} title={task.title} meta={`${task.priority} · ${task.status}`} />
           ))}
         </div>
         <div className="panel space-y-3">
-          <h2 className="font-semibold">Overdue Tasks</h2>
-          {dashboard.overdueTasks.length === 0 ? <EmptyState title="No overdue tasks" /> : dashboard.overdueTasks.map((task) => (
-            <TaskRow key={task.id} title={task.title} meta={task.dueDate ?? 'No date'} danger />
+          <h2 className="font-semibold">{t('dashboard.overdueTasks')}</h2>
+          {dashboard.overdueTasks.length === 0 ? <EmptyState title={t('dashboard.noOverdueTasks')} /> : dashboard.overdueTasks.map((task) => (
+            <TaskRow key={task.id} title={task.title} meta={task.dueDate ?? t('common.noDate')} danger />
           ))}
         </div>
       </section>
       <section className="grid gap-4 lg:grid-cols-2">
         <div className="panel space-y-3">
-          <h2 className="font-semibold">Project Progress</h2>
-          {dashboard.projects.length === 0 ? <EmptyState title="No projects yet" detail="Create a project to start tracking progress." /> : dashboard.projects.map((project) => (
+          <h2 className="font-semibold">{t('dashboard.projectProgress')}</h2>
+          {dashboard.projects.length === 0 ? <EmptyState title={t('dashboard.noProjects')} detail={t('dashboard.noProjectsDetail')} /> : dashboard.projects.map((project) => (
             <Link key={project.id} className="block rounded-md border border-zinc-200 p-3 hover:bg-zinc-50" to={`/projects/${project.id}`}>
               <div className="flex items-center justify-between gap-3">
                 <span className="font-medium">{project.title}</span>
@@ -61,15 +63,15 @@ export function DashboardPage() {
           ))}
         </div>
         <div className="panel space-y-3">
-          <h2 className="font-semibold">AI Recommendations</h2>
+          <h2 className="font-semibold">{t('dashboard.aiRecommendations')}</h2>
           {dashboard.aiRecommendations.map((item) => (
             <p key={item} className="rounded-md bg-teal-50 p-3 text-sm text-teal-950">{item}</p>
           ))}
         </div>
       </section>
       <section className="grid gap-4 lg:grid-cols-2">
-        <Recent title="Recent Notes" items={dashboard.recentNotes.map((note) => note.title)} empty="No notes yet" />
-        <Recent title="Recent Documents" items={dashboard.recentDocuments.map((doc) => doc.title)} empty="No documents yet" />
+        <Recent title={t('dashboard.recentNotes')} items={dashboard.recentNotes.map((note) => note.title)} empty={t('dashboard.noNotes')} />
+        <Recent title={t('dashboard.recentDocuments')} items={dashboard.recentDocuments.map((doc) => doc.title)} empty={t('dashboard.noDocuments')} />
       </section>
     </div>
   );

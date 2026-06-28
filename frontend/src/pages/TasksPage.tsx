@@ -1,6 +1,7 @@
 import { FormEvent, ReactNode, useEffect, useState } from 'react';
 import { api } from '../api/client';
 import { EmptyState } from '../components/EmptyState';
+import { useI18n } from '../i18n/I18nContext';
 import { Project, Task, TaskPriority, TaskStatus } from '../types';
 import { errorMessage } from '../utils/errors';
 import { optional, optionalNumber } from '../utils/forms';
@@ -13,6 +14,7 @@ export function TasksPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [editing, setEditing] = useState<Task | null>(null);
   const [error, setError] = useState('');
+  const { t } = useI18n();
 
   async function load() {
     try {
@@ -58,7 +60,7 @@ export function TasksPage() {
   }
 
   async function remove(id: number) {
-    if (!confirm('Delete this task?')) return;
+    if (!confirm(t('tasks.deleteConfirm'))) return;
     await api.delete(`/tasks/${id}`);
     await load();
   }
@@ -67,42 +69,42 @@ export function TasksPage() {
     <div className="grid gap-6 lg:grid-cols-[360px_1fr]">
       <form key={editing?.id ?? 'new'} className="panel h-fit space-y-4" onSubmit={onSubmit}>
         <div>
-          <h1 className="text-xl font-semibold">{editing ? 'Edit Task' : 'Tasks'}</h1>
-          <p className="text-sm text-zinc-600">Plan work and link it to projects.</p>
+          <h1 className="text-xl font-semibold">{editing ? t('tasks.editTitle') : t('tasks.title')}</h1>
+          <p className="text-sm text-zinc-600">{t('tasks.subtitle')}</p>
         </div>
         {error && <p className="rounded-md bg-red-50 p-3 text-sm text-red-700">{error}</p>}
-        <Field label="Title"><input name="title" defaultValue={editing?.title} required /></Field>
-        <Field label="Project">
+        <Field label={t('common.title')}><input name="title" defaultValue={editing?.title} required /></Field>
+        <Field label={t('common.project')}>
           <select name="projectId" defaultValue={editing?.projectId ?? ''}>
-            <option value="">No project</option>
+            <option value="">{t('common.noProject')}</option>
             {projects.map((project) => <option key={project.id} value={project.id}>{project.title}</option>)}
           </select>
         </Field>
-        <Field label="Description"><textarea name="description" defaultValue={editing?.description} /></Field>
+        <Field label={t('common.description')}><textarea name="description" defaultValue={editing?.description} /></Field>
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Priority"><select name="priority" defaultValue={editing?.priority ?? 'MEDIUM'}>{priorities.map((item) => <option key={item}>{item}</option>)}</select></Field>
-          <Field label="Status"><select name="status" defaultValue={editing?.status ?? 'TODO'}>{statuses.map((item) => <option key={item}>{item}</option>)}</select></Field>
+          <Field label={t('common.priority')}><select name="priority" defaultValue={editing?.priority ?? 'MEDIUM'}>{priorities.map((item) => <option key={item} value={item}>{t(`priority.${item}`)}</option>)}</select></Field>
+          <Field label={t('common.status')}><select name="status" defaultValue={editing?.status ?? 'TODO'}>{statuses.map((item) => <option key={item} value={item}>{t(`taskStatus.${item}`)}</option>)}</select></Field>
         </div>
-        <Field label="Due"><input name="dueDate" type="date" defaultValue={editing?.dueDate} /></Field>
+        <Field label={t('common.due')}><input name="dueDate" type="date" defaultValue={editing?.dueDate} /></Field>
         <div className="flex gap-2">
-          <button className="btn-primary flex-1">{editing ? 'Save Task' : 'Create Task'}</button>
-          {editing && <button className="btn-secondary" type="button" onClick={() => setEditing(null)}>Cancel</button>}
+          <button className="btn-primary flex-1">{editing ? t('tasks.save') : t('tasks.create')}</button>
+          {editing && <button className="btn-secondary" type="button" onClick={() => setEditing(null)}>{t('action.cancel')}</button>}
         </div>
       </form>
       <section className="space-y-3">
-        {tasks.length === 0 ? <EmptyState title="No tasks yet" /> : tasks.map((task) => (
+        {tasks.length === 0 ? <EmptyState title={t('tasks.empty')} /> : tasks.map((task) => (
           <article key={task.id} className="panel">
             <div className="flex flex-col justify-between gap-3 sm:flex-row">
               <div>
                 <h2 className="font-semibold">{task.title}</h2>
-                <p className="text-sm text-zinc-600">{task.description || 'No description'}</p>
+                <p className="text-sm text-zinc-600">{task.description || t('common.noDescription')}</p>
                 <p className={`mt-2 text-xs uppercase ${task.overdue ? 'text-red-700' : 'text-zinc-500'}`}>
-                  {task.priority} · {task.status} · {task.projectTitle ?? 'No project'} · {task.dueDate ?? 'No due date'}
+                  {t(`priority.${task.priority}`)} · {t(`taskStatus.${task.status}`)} · {task.projectTitle ?? t('common.noProject')} · {task.dueDate ?? t('common.noDate')}
                 </p>
               </div>
               <div className="flex gap-2">
-                <button className="btn-secondary" onClick={() => setEditing(task)}>Edit</button>
-                <button className="btn-danger" onClick={() => void remove(task.id)}>Delete</button>
+                <button className="btn-secondary" onClick={() => setEditing(task)}>{t('action.edit')}</button>
+                <button className="btn-danger" onClick={() => void remove(task.id)}>{t('action.delete')}</button>
               </div>
             </div>
           </article>
