@@ -29,7 +29,7 @@ public class NoteDtos {
                     note.getProject() == null ? null : note.getProject().getTitle(),
                     note.getTitle(),
                     note.getContent(),
-                    note.getTags(),
+                    List.copyOf(note.getTags()),
                     note.getCreatedAt(),
                     note.getUpdatedAt()
             );

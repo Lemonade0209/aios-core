@@ -1,0 +1,23 @@
+.DS_Store
+
+# Java / Gradle
+backend/.gradle/
+backend/build/
+
+# Node / Vite
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+frontend/*.tsbuildinfo
+frontend/vite.config.js
+frontend/vite.config.d.ts
+
+# Local environment
+.env
+.env.*
+backend/.env
+frontend/.env
+
+# IDE
+.idea/
+.vscode/

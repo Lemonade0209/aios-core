@@ -92,17 +92,22 @@ public class AiService {
     }
 
     public String summarize(String sourceType, String title, String content) {
+        return summarizeDetailed(sourceType, title, content).summary();
+    }
+
+    public SummaryResult summarizeDetailed(String sourceType, String title, String content) {
         String prompt = "Summarize this " + sourceType + " for a productivity dashboard. Keep it concise.\nTitle: "
                 + title + "\nContent:\n" + content;
         String answer = callOpenAi(prompt);
         if (answer != null) {
-            return answer;
+            return new SummaryResult(answer, true);
         }
         String normalized = content == null ? "" : content.strip().replaceAll("\\s+", " ");
         if (normalized.isBlank()) {
-            return "No content available to summarize.";
+            return new SummaryResult("No content available to summarize.", false);
         }
-        return normalized.length() <= 240 ? normalized : normalized.substring(0, 237) + "...";
+        String fallback = normalized.length() <= 240 ? normalized : normalized.substring(0, 237) + "...";
+        return new SummaryResult(fallback, false);
     }
 
     @Transactional(readOnly = true)
@@ -175,4 +180,6 @@ public class AiService {
     private String join(String left, String right) {
         return (left == null ? "" : left) + " " + (right == null ? "" : right);
     }
+
+    public record SummaryResult(String summary, boolean usedOpenAi) {}
 }

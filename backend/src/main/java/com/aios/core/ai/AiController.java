@@ -26,7 +26,7 @@ public class AiController {
 
     @PostMapping("/summarize")
     SummaryResponse summarize(@Valid @RequestBody SummaryRequest request) {
-        String summary = aiService.summarize(request.sourceType(), request.title(), request.content());
-        return new SummaryResponse(summary, false);
+        AiService.SummaryResult result = aiService.summarizeDetailed(request.sourceType(), request.title(), request.content());
+        return new SummaryResponse(result.summary(), result.usedOpenAi());
     }
 }

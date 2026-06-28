@@ -12,6 +12,8 @@ public interface TaskRepository extends JpaRepository<TaskItem, Long> {
 
     List<TaskItem> findTop10ByUserOrderByUpdatedAtDesc(AppUser user);
 
+    List<TaskItem> findByProject(Project project);
+
     List<TaskItem> findByUserAndDueDateAndStatusNotOrderByDueDateAsc(AppUser user, LocalDate dueDate, TaskStatus status);
 
     List<TaskItem> findByUserAndDueDateBeforeAndStatusNotOrderByDueDateAsc(AppUser user, LocalDate dueDate, TaskStatus status);

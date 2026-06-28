@@ -1,6 +1,8 @@
 package com.aios.core.project;
 
 import com.aios.core.global.exception.ApiException;
+import com.aios.core.document.DocumentRepository;
+import com.aios.core.note.NoteRepository;
 import com.aios.core.project.ProjectDtos.ProjectRequest;
 import com.aios.core.project.ProjectDtos.ProjectResponse;
 import com.aios.core.task.TaskRepository;
@@ -16,11 +18,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProjectService {
     private final ProjectRepository projects;
     private final TaskRepository tasks;
+    private final NoteRepository notes;
+    private final DocumentRepository documents;
     private final UserService userService;
 
-    public ProjectService(ProjectRepository projects, TaskRepository tasks, UserService userService) {
+    public ProjectService(ProjectRepository projects, TaskRepository tasks, NoteRepository notes, DocumentRepository documents, UserService userService) {
         this.projects = projects;
         this.tasks = tasks;
+        this.notes = notes;
+        this.documents = documents;
         this.userService = userService;
     }
 
@@ -54,7 +60,11 @@ public class ProjectService {
 
     @Transactional
     public void delete(Long id) {
-        projects.delete(getOwned(id));
+        Project project = getOwned(id);
+        tasks.findByProject(project).forEach(task -> task.setProject(null));
+        notes.findByProject(project).forEach(note -> note.setProject(null));
+        documents.findByProject(project).forEach(document -> document.setProject(null));
+        projects.delete(project);
     }
 
     public Project getOwned(Long id) {
